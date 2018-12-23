@@ -1,25 +1,46 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
+import Users from './Users';
+import { loadJson } from './Utils';
 import './App.css';
 
 class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: false,
+      data: null
+    };
+  }
+
+  async componentDidMount() {
+    this.setState({
+      loading: true
+    });
+    try {
+      const data = await loadJson(`http://localhost:3004/users/`);
+      this.setState({
+        data,
+        loading:false
+      })
+    } catch(error) {
+      this.setState({
+        loading:false
+      })
+      //alert(error);
+    }
+  }
+
   render() {
+    const { loading, data } = this.state;
+    console.log('loading ', loading);
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <Users
+          loading={loading}
+          data={data}
+        />
       </div>
     );
   }
